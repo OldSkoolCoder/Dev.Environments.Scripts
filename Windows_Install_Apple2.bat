@@ -5,7 +5,8 @@ setlocal enabledelayedexpansion
 set "TOOLS_DIR=%USERPROFILE%\DeveloperTools"
 set "TEMP_DIR=%TEMP%\DevSetup"
 set "KICK_DIR=%TOOLS_DIR%\KickAssembler"
-set "X16_DIR=%TOOLS_DIR%\CommanderX16"
+set "APPLEII_DIR=%TOOLS_DIR%\AppleII"
+set "RETRODEBUG_DIR=%TOOLS_DIR%\RetroDebugger"
 set "EXTENSION=paulhocker.kick-assembler-vscode-ext"
 set "CONFIG_DIR=%USERPROFILE%\AppData\Roaming\Code\User"
 set "SETTINGS_FILE=%CONFIG_DIR%\settings.json"
@@ -14,7 +15,8 @@ set "SETTINGS_FILE=%CONFIG_DIR%\settings.json"
 mkdir "%TOOLS_DIR%" 2>nul
 mkdir "%TEMP_DIR%" 2>nul
 mkdir "%KICK_DIR%" 2>nul
-mkdir "%X16_DIR%" 2>nul
+mkdir "%APPLEII_DIR%" 2>nul
+mkdir "%RETRODEBUG_DIR%" 2>nul
 
 :: Check for curl or fallback
 where curl >nul 2>nul
@@ -40,9 +42,29 @@ if "%DOWNLOADER%"=="curl" (
     bitsadmin /transfer "JDKDownload" "%JDK_URL%" "%JDK_ZIP%"
 )
 
-tar -xf "%JDK_ZIP%" -C "%JDK_DEST%"
+tar -xf "%JDK_ZIP%" --strip-components=1 -C "%JDK_DEST%"
 
 set PATH=%PATH%;%JDK_DEST%\jdk-24.0.1\bin
+
+echo ========================================
+echo INSTALLING Visual C++ Redistributable x86
+echo ========================================
+set MSVC_URL="https://aka.ms/vs/17/release/vc_redist.x86.exe"
+set "MSVC_EXE=%TEMP_DIR%\vc_redist.x86.exe"
+curl -L -o "%MSVC_EXE%" "%MSVC_URL%"
+echo.
+echo CHECK Taskbar for UAC prompt
+"%MSVC_EXE%" /QUIET /NORESTART
+
+echo ========================================
+echo INSTALLING Visual C++ Redistributable x64
+echo ========================================
+set MSVC2_URL="https://aka.ms/vs/17/release/vc_redist.x64.exe"
+set "MSVC2_EXE=%TEMP_DIR%\vc_redist.x64.exe"
+curl -L -o "%MSVC2_EXE%" "%MSVC2_URL%"
+echo.
+echo CHECK Taskbar for UAC prompt
+"%MSVC2_EXE%" /QUIET /NORESTART
 
 echo ========================================
 echo INSTALLING GIT
@@ -76,15 +98,23 @@ curl -L -o "%KICK_ZIP%" "%KICK_URL%"
 tar -xf "%KICK_ZIP%" -C "%KICK_DIR%"
 
 echo ========================================
-echo DOWNLOADING COMMANDER X16 EMULATOR
+echo DOWNLOADING APPLE][ EMULATOR
 echo ========================================
-set "X16_URL=https://github.com/X16Community/x16-emulator/releases/download/r48/x16emu_win64-r48.zip"
-set "X16_ZIP=%TEMP_DIR%\x16.zip"
+set "APPLEII_URL=https://github.com/AppleWin/AppleWin/releases/download/v1.30.21.0/AppleWin1.30.21.0.zip"
+set "APPLEII_ZIP=%TEMP_DIR%\APPLEII.zip"
 
-curl -L -o "%X16_ZIP%" "%X16_URL%"
-tar -xf "%X16_ZIP%" -C "%X16_DIR%"
+curl -L -o "%APPLEII_ZIP%" "%APPLEII_URL%"
+tar -xf "%APPLEII_ZIP%" -C "%APPLEII_DIR%"
 
-set PATH=%PATH%;%TOOLS_DIR%\CommanderX16
+echo ========================================
+echo DOWNLOADING RETRO Debugger
+echo ========================================
+set "RETRODEBUG_URL=https://github.com/slajerek/RetroDebugger/releases/download/v0.64.72/RetroDebugger.v0.64.72-windows-x64-notsigned.zip"
+set "RETRODEBUG_ZIP=%TEMP_DIR%\RetroDebugger.zip"
+
+curl -L -o "%RETRODEBUG_ZIP%" "%RETRODEBUG_URL%"
+tar -xf "%RETRODEBUG_ZIP%" --strip-components=1 -C "%RETRODEBUG_DIR%"
+
 @echo on
 > %SETTINGS_FILE% echo {
 >> %SETTINGS_FILE% echo     "editor.tabSize": 4,
@@ -92,32 +122,33 @@ set PATH=%PATH%;%TOOLS_DIR%\CommanderX16
 >> %SETTINGS_FILE% echo     "terminal.integrated.defaultProfile.windows": "Command Prompt",
 >> %SETTINGS_FILE% echo     "files.autoSave": "afterDelay",
 >> %SETTINGS_FILE% echo     "kickassembler.byteDumpFile": true,
+>> %SETTINGS_FILE% echo     "kickassembler.assembler.option.binfile": true,
 >> %SETTINGS_FILE% echo     "kickassembler.assembler.option.outputDirectory": "./build",
 >> %SETTINGS_FILE% echo     "kickassembler.java.runtime": "%JDK_DEST:\=/%/bin/java.exe",
 >> %SETTINGS_FILE% echo     "kickassembler.assembler.jar": "%KICK_DIR:\=/%/KickAss.jar",
->> %SETTINGS_FILE% echo     "kickassembler.emulator.runtime": "%TOOLS_DIR:\=/%/VICE/bin/x64sc.exe",
->> %SETTINGS_FILE% echo     "kickassembler.debugger.runtime": "%C64DeBug_DIR:\=/%/C64Debugger.exe",
+>> %SETTINGS_FILE% echo     "kickassembler.emulator.runtime": "%TOOLS_DIR:\=/%/APPLEII/AppleWin.exe",
+>> %SETTINGS_FILE% echo     "kickassembler.emulator.options": " ${kickassembler:buildFilename}",
 >> %SETTINGS_FILE% echo     "files.associations": {
 >> %SETTINGS_FILE% echo         "*.asm": "kickassembler",
 >> %SETTINGS_FILE% echo         "*.6502": "beebasm", 
 >> %SETTINGS_FILE% echo         "*.z80": "pasmo"
 >> %SETTINGS_FILE% echo     }
 >> %SETTINGS_FILE% echo }
+
 @echo off
 cls
 start /MIN code --install-extension "%EXTENSION%" --force
 start /MIN code --install-extension "%BEEBASM_EXTENSION%" --force
-start /MIN code --install-extension "%Z80EXTENSION%" --force
 
 echo.
 echo ========================================
 echo DONE!
+echo.
 echo Add these to your PATH (manually):
+echo.
 echo   %JDK_DEST%\bin
-echo   %TOOLS_DIR%\Git\bin
-echo   %KICK_DIR%
-echo   %X16_DIR%
 echo ========================================
+echo.
 start rundll32 sysdm.cpl,EditEnvironmentVariables
 pause
 @echo on

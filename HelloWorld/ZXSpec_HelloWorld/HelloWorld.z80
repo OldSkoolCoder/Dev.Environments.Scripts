@@ -1,0 +1,36 @@
+; Hello World program for the ZX Spectrum
+; Assembled with PASMO and run with ZEsarUX Emulator
+; Outputs "hello world" to the screen
+;
+; to assemble and run:
+; 1) kickass HelloWorld.asm by pressing F1 or [ctrl]+p to open command pallet
+; 2) Type "task run task" and click on "Run Task"
+; 3) select the "PASMO Build & Launch Z80 Emulator" task
+; 4) enjoy :)
+
+; to start your own project
+; 1) copy this folder and rename it
+; 2) open the new folder in VSCode
+; 3) rename the "helloWorld.code-workspace" file to match your folder name
+; 4) rename the HelloWorld.asm file to start your own code
+; 5) Start coding :)
+
+org $8000
+START:
+  ld bc, MY_STRING
+
+MY_LOOP:
+  ld a, (bc)
+  cp 0
+  jr z, END_PROGRAM
+  rst $10
+  inc bc
+  jr MY_LOOP
+
+END_PROGRAM:
+  ret
+
+MY_STRING:
+  defb "Hello, world!"
+  defb 13, 0
+  END $8000

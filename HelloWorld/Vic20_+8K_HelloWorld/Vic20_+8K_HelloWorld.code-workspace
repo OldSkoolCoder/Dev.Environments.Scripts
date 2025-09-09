@@ -1,0 +1,12 @@
+{
+    "folders": [
+        {
+            "path": "."
+        }
+    ],
+    "settings": {
+        "kickassembler.emulator.runtime": "C:/Users/gary/DeveloperTools/VICE/bin/xvic.exe",
+		"kickassembler.emulator.options": "-autostartprgmode 1 -autostart ${kickassembler:buildFilename} -moncommands ${kickassembler:viceSymbolsFilename} -memory 8k"
+	
+    }
+}

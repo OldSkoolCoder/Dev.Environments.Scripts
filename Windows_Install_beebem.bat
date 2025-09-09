@@ -5,18 +5,20 @@ setlocal enabledelayedexpansion
 set "TOOLS_DIR=%USERPROFILE%\DeveloperTools"
 set "TEMP_DIR=%TEMP%\DevSetup"
 set "KICK_DIR=%TOOLS_DIR%\KickAssembler"
-set "C64_DIR=%TOOLS_DIR%\VICE"
-set "C64DeBug_DIR=%TOOLS_DIR%\C64Debugger"
-set "EXTENSION=paulhocker.kick-assembler-vscode-ext"
+set "BEEBEM_DIR=%TOOLS_DIR%\BeebEm"
+set "BEEBASM_DIR=%TOOLS_DIR%\BeebAsm"
 set "CONFIG_DIR=%USERPROFILE%\AppData\Roaming\Code\User"
 set "SETTINGS_FILE=%CONFIG_DIR%\settings.json"
+
+set "EXTENSION=paulhocker.kick-assembler-vscode-ext"
+set "BEEBASM_EXTENSION=simondotm.beeb-vsc"
 
 :: Create directories
 mkdir "%TOOLS_DIR%" 2>nul
 mkdir "%TEMP_DIR%" 2>nul
 mkdir "%KICK_DIR%" 2>nul
-mkdir "%C64_DIR%" 2>nul
-mkdir "%C64DeBug_DIR%" 2>nul
+mkdir "%BEEBASM_DIR%" 2>nul
+mkdir "%BEEBEM_DIR%" 2>nul
 
 :: Check for curl or fallback
 where curl >nul 2>nul
@@ -47,6 +49,27 @@ tar -xf "%JDK_ZIP%" -C "%JDK_DEST%"
 set PATH=%PATH%;%JDK_DEST%\jdk-24.0.1\bin
 
 echo ========================================
+echo INSTALLING Visual C++ Redistributable x86
+echo ========================================
+set MSVC_URL="https://aka.ms/vs/17/release/vc_redist.x86.exe"
+set "MSVC_EXE=%TEMP_DIR%\vc_redist.x86.exe"
+curl -L -o "%MSVC_EXE%" "%MSVC_URL%"
+echo.
+echo CHECK Taskbar for UAC prompt
+"%MSVC_EXE%" /QUIET /NORESTART
+
+echo ========================================
+echo INSTALLING Visual C++ Redistributable x64
+echo ========================================
+set MSVC2_URL="https://aka.ms/vs/17/release/vc_redist.x64.exe"
+set "MSVC2_EXE=%TEMP_DIR%\vc_redist.x64.exe"
+curl -L -o "%MSVC2_EXE%" "%MSVC2_URL%"
+echo.
+echo CHECK Taskbar for UAC prompt
+"%MSVC2_EXE%" /QUIET /NORESTART
+
+
+echo ========================================
 echo INSTALLING GIT
 echo ========================================
 set "GIT_URL=https://github.com/git-for-windows/git/releases/download/v2.50.0.windows.1/Git-2.50.0-64-bit.exe"
@@ -54,8 +77,6 @@ set "GIT_EXE=%TEMP_DIR%\git-installer.exe"
 
 curl -L -o "%GIT_EXE%" "%GIT_URL%"
 "%GIT_EXE%" /VERYSILENT /NORESTART /DIR="%TOOLS_DIR%\Git"
-
-set PATH=%PATH%;%TOOLS_DIR%\Git\cmd
 
 echo ========================================
 echo INSTALLING VISUAL STUDIO CODE
@@ -78,41 +99,48 @@ curl -L -o "%KICK_ZIP%" "%KICK_URL%"
 tar -xf "%KICK_ZIP%" -C "%KICK_DIR%"
 
 echo ========================================
-echo DOWNLOADING VICE EMULATOR
+echo DOWNLOADING BEEBASM
 echo ========================================
-set "VICE_URL=https://github.com/VICE-Team/svn-mirror/releases/download/r45737/GTK3VICE-3.9-win64-r45737.zip"
-set "VICE_ZIP=%TEMP_DIR%\VICE.zip"
+set "BEEBASM_URL=https://github.com/stardot/beebasm/releases/download/v1.10/beebasm-win32.zip"
+set "BEEBASM_ZIP=%TEMP_DIR%\beebasm.zip"
 
-curl -L -o "%VICE_ZIP%" "%VICE_URL%"
-tar -xf "%VICE_ZIP%" --strip-components=1 -C "%C64_DIR%"
-
-set PATH=%PATH%;%C64_DIR%/bin
+curl -L -o "%BEEBASM_ZIP%" "%BEEBASM_URL%"
+tar -xf "%BEEBASM_ZIP%" -C "%BEEBASM_DIR%"
+set PATH=%PATH%;%TOOLS_DIR%\beebasm
 
 echo ========================================
-echo DOWNLOADING C64 Debugger
+echo DOWNLOADING beebem EMULATOR
 echo ========================================
-set "C64Debug_URL=https://commodore.software/downloads?task=download.send&id=13870:c64-debugger-v0-64-58-all-platforms&catid=675"
-set "C64Debug_ZIP=%TEMP_DIR%\C64Debug.zip"
+set "beebem_url=https://github.com/stardot/beebem-windows/releases/download/4.19/BeebEm419.zip"
+set "beebem_ZIP=%TEMP_DIR%\beebem419.zip"
 
-curl -L -o "%C64Debug_ZIP%" "%C64Debug_URL%"
-tar -xf "%C64Debug_ZIP%" -C "%TEMP_DIR%"
+curl -L -o "%beebem_ZIP%" "%beebem_url%"
+tar -xf "%beebem_ZIP%" -C "%TOOLS_DIR%"
 
-tar -xf "%TEMP_DIR%\C64-65XE-Debugger-v0.64.58-win32.zip" --strip-components=1 -C "%C64DeBug_DIR%"
-
-set PATH=%PATH%;%C64DeBug_DIR%
+set PATH=%PATH%;%TOOLS_DIR%\beebem
 
 @echo on
 > %SETTINGS_FILE% echo {
 >> %SETTINGS_FILE% echo     "editor.tabSize": 4,
->> %SETTINGS_FILE% echo     "editor.rulers": [80, 120],
+>> %SETTINGS_FILE% echo     "editor.rulers": [60],
+>> %SETTINGS_FILE% echo     "terminal.integrated.defaultProfile.windows": "Command Prompt",
 >> %SETTINGS_FILE% echo     "files.autoSave": "afterDelay",
->> %SETTINGS_FILE% echo     "kickassembler.java.runtime": "%JDK_DEST:\=/%/jdk-24.0.1/bin/java.exe",
+>> %SETTINGS_FILE% echo     "kickassembler.byteDumpFile": true,
+>> %SETTINGS_FILE% echo     "kickassembler.assembler.option.outputDirectory": "./build",
+>> %SETTINGS_FILE% echo     "kickassembler.java.runtime": "%JDK_DEST:\=/%/bin/java.exe",
 >> %SETTINGS_FILE% echo     "kickassembler.assembler.jar": "%KICK_DIR:\=/%/KickAss.jar",
 >> %SETTINGS_FILE% echo     "kickassembler.emulator.runtime": "%TOOLS_DIR:\=/%/VICE/bin/x64sc.exe",
 >> %SETTINGS_FILE% echo     "kickassembler.debugger.runtime": "%C64DeBug_DIR:\=/%/C64Debugger.exe",
+>> %SETTINGS_FILE% echo     "files.associations": {
+>> %SETTINGS_FILE% echo         "*.asm": "kickassembler",
+>> %SETTINGS_FILE% echo         "*.6502": "beebasm", 
+>> %SETTINGS_FILE% echo         "*.z80": "pasmo"
+>> %SETTINGS_FILE% echo     }
 >> %SETTINGS_FILE% echo }
-
-code --install-extension "%EXTENSION%" --force
+@echo off
+cls
+start /MIN code --install-extension "%EXTENSION%" --force
+start /MIN code --install-extension "%BEEBASM_EXTENSION%" --force
 
 echo.
 echo ========================================
@@ -123,4 +151,6 @@ echo   %TOOLS_DIR%\Git\bin
 echo   %KICK_DIR%
 echo   %X16_DIR%
 echo ========================================
+start rundll32 sysdm.cpl,EditEnvironmentVariables
 pause
+@echo on

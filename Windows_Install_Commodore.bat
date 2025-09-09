@@ -5,7 +5,8 @@ setlocal enabledelayedexpansion
 set "TOOLS_DIR=%USERPROFILE%\DeveloperTools"
 set "TEMP_DIR=%TEMP%\DevSetup"
 set "KICK_DIR=%TOOLS_DIR%\KickAssembler"
-set "X16_DIR=%TOOLS_DIR%\CommanderX16"
+set "C64_DIR=%TOOLS_DIR%\VICE"
+set "C64DeBug_DIR=%TOOLS_DIR%\C64Debugger"
 set "EXTENSION=paulhocker.kick-assembler-vscode-ext"
 set "CONFIG_DIR=%USERPROFILE%\AppData\Roaming\Code\User"
 set "SETTINGS_FILE=%CONFIG_DIR%\settings.json"
@@ -14,7 +15,8 @@ set "SETTINGS_FILE=%CONFIG_DIR%\settings.json"
 mkdir "%TOOLS_DIR%" 2>nul
 mkdir "%TEMP_DIR%" 2>nul
 mkdir "%KICK_DIR%" 2>nul
-mkdir "%X16_DIR%" 2>nul
+mkdir "%C64_DIR%" 2>nul
+mkdir "%C64DeBug_DIR%" 2>nul
 
 :: Check for curl or fallback
 where curl >nul 2>nul
@@ -76,15 +78,25 @@ curl -L -o "%KICK_ZIP%" "%KICK_URL%"
 tar -xf "%KICK_ZIP%" -C "%KICK_DIR%"
 
 echo ========================================
-echo DOWNLOADING COMMANDER X16 EMULATOR
+echo DOWNLOADING VICE EMULATOR
 echo ========================================
-set "X16_URL=https://github.com/X16Community/x16-emulator/releases/download/r48/x16emu_win64-r48.zip"
-set "X16_ZIP=%TEMP_DIR%\x16.zip"
+set "VICE_URL=https://github.com/VICE-Team/svn-mirror/releases/download/r45737/GTK3VICE-3.9-win64-r45737.zip"
+set "VICE_ZIP=%TEMP_DIR%\VICE.zip"
 
-curl -L -o "%X16_ZIP%" "%X16_URL%"
-tar -xf "%X16_ZIP%" -C "%X16_DIR%"
+curl -L -o "%VICE_ZIP%" "%VICE_URL%"
+tar -xf "%VICE_ZIP%" --strip-components=1 -C "%C64_DIR%"
 
-set PATH=%PATH%;%TOOLS_DIR%\CommanderX16
+echo ========================================
+echo DOWNLOADING C64 Debugger
+echo ========================================
+set "C64Debug_URL=https://commodore.software/downloads?task=download.send&id=13870:c64-debugger-v0-64-58-all-platforms&catid=675"
+set "C64Debug_ZIP=%TEMP_DIR%\C64Debug.zip"
+
+curl -L -o "%C64Debug_ZIP%" "%C64Debug_URL%"
+tar -xf "%C64Debug_ZIP%" -C "%TEMP_DIR%"
+
+tar -xf "%TEMP_DIR%\C64-65XE-Debugger-v0.64.58-win32.zip" --strip-components=1 -C "%C64DeBug_DIR%"
+
 @echo on
 > %SETTINGS_FILE% echo {
 >> %SETTINGS_FILE% echo     "editor.tabSize": 4,
@@ -107,7 +119,6 @@ set PATH=%PATH%;%TOOLS_DIR%\CommanderX16
 cls
 start /MIN code --install-extension "%EXTENSION%" --force
 start /MIN code --install-extension "%BEEBASM_EXTENSION%" --force
-start /MIN code --install-extension "%Z80EXTENSION%" --force
 
 echo.
 echo ========================================

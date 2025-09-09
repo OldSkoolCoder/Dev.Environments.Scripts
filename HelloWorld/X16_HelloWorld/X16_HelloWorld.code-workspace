@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"kickassembler.emulator.runtime": "C:\\Users\\gary\\DeveloperTools\\CommanderX16/x16emu.exe",
+		"kickassembler.emulator.options": "-prg ${kickassembler:buildFilename} -run"
+	}
+}

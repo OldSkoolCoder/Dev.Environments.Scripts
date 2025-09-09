@@ -31,14 +31,21 @@ Whether you're a retro game developer, hobbyist, or enthusiast, these scripts ma
 
 ## 🧰 Whats Installed
 
-| Requirement       | Description                                           |
-|-------------------|-------------------------------------------------------|
-| Java (JRE/JDK)    | Needed for Kick Assembler (auto-installed if missing) |
-| Git               | For cloning the repository and downloading tools      |
-| Curl/Wget         | For downloading binaries                              |
-| VSCode            | Will be auto-installed if not found                   |
-| CommanderX16      | Will be auto-installed if not found                   |
-| VICE Emulator     | Will be auto-installed if not found                   |
+|  Requirement         | Description                                           |
+|----------------------|-------------------------------------------------------|
+|  Java (JRE/JDK)      | Needed for Kick Assembler (auto-installed if missing) |
+|  Git                 | For cloning the repository and downloading tools      |
+| *Visual C Redist     | Required for beebasm to run*                          |
+|  Curl/Wget           | For downloading binaries                              |
+|  VSCode              | Will be auto-installed if not found                   |
+| *CommanderX16        | Will be auto-installed if not found*                  |
+| *VICE Emulator       | Will be auto-installed if not found*                  |
+| *SEarUX Emulator     | Will be auto-installed if not found*                  |
+| *Pasmo Z80 Assembler | Will be auto-installed if not found*                  |
+| *BeebEm Emulator     | Will be auto-installed if not found*                  |
+| *Beebasm Emulator    | Will be auto-installed if not found*                  |
+
+#### *Depending on installer script used 
 ---
 
 ## 📥 Installation
@@ -98,9 +105,16 @@ Whether you're a retro game developer, hobbyist, or enthusiast, these scripts ma
 ## 📚 Resources
 
 - [Kick Assembler Official Site](http://www.theweb.dk/KickAssembler/)
+- [Pasmo Assembler](https://pasmo.speccy.org/)
+- [BeebASM Assembler](https://github.com/stardot/beebasm)
+- [SEsarUX Emulator](https://github.com/chernandezba/zesarux/)
 - [Commander X16](https://www.commanderx16.com/)
-- [Kick 8-Bit Retro Studio](https://marketplace.visualstudio.com/items?itemName=paulhocker.kickassembler)
+- [BeebEm Emulator](http://www.mkw.me.uk/beebem/)
 - [VICE Emulator (Versatile Commodore Emulator)](https://vice-emu.sourceforge.io/)
+- [Kick 8-Bit Retro Studio extension]([https://marketplace.visualstudio.com/items?itemName=paulhocker.kickassembler](https://marketplace.visualstudio.com/items?itemName=paulhocker.kick-assembler-vscode-ext))
+- [pasmo Extension](https://marketplace.visualstudio.com/items?itemName=boukichi.pasmo)
+- [beeb VSC (BeebASM)](https://marketplace.visualstudio.com/items?itemName=simondotm.beeb-vsc)
+- 
 
 
 ---

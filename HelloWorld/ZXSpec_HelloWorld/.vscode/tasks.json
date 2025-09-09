@@ -1,0 +1,46 @@
+{
+    "version": "2.0.0",
+    "command": "cmd",
+    "isShellCommand": true,
+    "showOutput": "always", 
+    "echoCommand": true,
+    "suppressTaskName": true,
+    "args": [
+        "/C"
+    ],
+    "tasks": [
+        {
+            "label": "PASMO Assemble Z80 Source",
+            "type": "shell",
+            "windows": {
+                "command": "${userHome}\\DeveloperTools\\Pasmo\\Pasmo.exe --tzxbas ${workspaceFolder}/${fileBasenameNoExtension}.z80 ./build/${fileBasenameNoExtension}.tzx"
+            },
+            "linux": {
+                "command": "pasmo --tzxbas ${workspaceFolder}/${fileBasenameNoExtension}.z80 ./build/${fileBasenameNoExtension}.tzx"
+            }
+        },
+        
+
+       
+        {
+            "label": "PASMO Build & Launch Z80 Emulator",
+            "type": "shell",
+            "windows": {
+                "command": "${userHome}\\DeveloperTools\\ZEsarUX\\ZEsarUX.exe ${workspaceFolder}/Build/${fileBasenameNoExtension}.tzx"
+            },
+            "linux": {
+                "command": "zesarux ${workspaceFolder}/Build/${fileBasenameNoExtension}.tzx"
+            },
+
+            "dependsOn": [
+                "PASMO Assemble Z80 Source"
+            ],
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+
+    ]
+}

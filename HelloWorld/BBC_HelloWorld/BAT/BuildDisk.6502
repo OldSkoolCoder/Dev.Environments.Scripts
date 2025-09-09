@@ -1,0 +1,7 @@
+ORG &1900 
+
+.CodeStart
+INCBIN "build/Program.bin"
+.CodeEnd
+
+SAVE "MAIN", CodeStart, CodeEnd

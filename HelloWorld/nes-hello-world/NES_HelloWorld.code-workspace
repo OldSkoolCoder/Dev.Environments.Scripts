@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"kickassembler.emulator.runtime": "C:\\Users\\gary\\DeveloperTools\\NES\\fceux64.exe",
+		"kickassembler.assembler.option.binfile": true,
+		"kickassembler.debugger.runtime": "C:/Users/gmeth/DeveloperTools/retrodebugger/retrodebugger-notsigned.exe",
+		"kickassembler.debugger.options": "-wait 2500 -autojmp -nes ${kickassembler:buildFilename} -symbols ${kickassembler:viceSymbolsFilename}",
+		"kickassembler.emulator.options": " ${kickassembler:buildFilename}"
+	}
+}

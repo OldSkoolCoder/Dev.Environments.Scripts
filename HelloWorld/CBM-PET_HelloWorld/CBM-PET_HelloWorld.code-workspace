@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"kickassembler.emulator.runtime": "C:/Users/gary/DeveloperTools/VICE/bin/xpet.exe",
+		"kickassembler.emulator.options": "-autostartprgmode 1 -autostart ${kickassembler:buildFilename}"
+	
+	}
+}
