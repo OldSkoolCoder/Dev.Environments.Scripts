@@ -4,3 +4,4 @@ Default Workspaces
 *.source.txt
 *.sh
 nes-hello-world
+scriptBuilder
