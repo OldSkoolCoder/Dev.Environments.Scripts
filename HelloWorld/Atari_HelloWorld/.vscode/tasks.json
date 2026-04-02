@@ -1,0 +1,30 @@
+{
+    "version": "2.0.0",
+    "command": "cmd",
+    "isShellCommand": true,
+    "showOutput": "always", 
+    "echoCommand": true,
+    "suppressTaskName": true,
+    "args": [
+        "/C"
+    ],
+    "tasks": [
+        {
+            "label": "Vasm Assemble Atari Source",
+            "type": "shell",
+            "windows": {
+                "command": "C:/Users/gary/DeveloperTools/VASM/vasm6502_oldstyle.exe ${fileBasename} -chklabels -nocase -Dvasm=1 -DBuildA80=1 -L build/byteDump.txt -Fbin -o build/${fileBasenameNoExtension}.rom"
+            },
+            "hide": true
+        },
+        {
+            "label": "Run Atari Source",
+            "type": "shell",
+            "windows": {
+                "command": "C:/Users/gary/DeveloperTools/Atari/Altirra64.exe build/${fileBasenameNoExtension}.rom /cartmapper 8k /pal /hardware 800xl /memsize 48k"
+            },
+            "dependsOn": "Vasm Assemble Atari Source",
+            "problemMatcher": []
+        }
+    ]
+}
