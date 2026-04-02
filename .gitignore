@@ -2,5 +2,6 @@
 *.pdf
 Default Workspaces
 *.source.txt
-*.sh
+Samba_Install.sh
+Test.sh
 nes-hello-world
